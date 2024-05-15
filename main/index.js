@@ -331,6 +331,33 @@ function UpdateEmployeeManager() {
     });
   });
 }
+
+// View all employees that belong to a department
+function FindAllEmployeesByDepartment() {
+  db.viewAllDepartments().then(({ rows }) => {
+    let departments = rows;
+    const departmentChoices = departments.map(({ id, name }) => ({
+      name: name,
+      value: id,
+    }));
+
+    prompt([
+      {
+        type: 'list',
+        name: 'departmentId',
+        message: 'Which department would you like to see employees for?',
+        choices: departmentChoices,
+      },
+    ])
+      .then((res) => db.findAllEmployeesByDepartment(res.departmentId))
+      .then(({ rows }) => {
+        let employees = rows;
+        console.log('\n');
+        console.table(employees);
+      })
+      .then(() => loadMainPrompts());
+  });
+}
 // Exit the application
 function quit() {
   console.log('Goodbye!');
