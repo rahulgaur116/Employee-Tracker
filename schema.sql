@@ -1,24 +1,23 @@
-CREATE TABLE Departments (
-    department_id INT PRIMARY KEY AUTO_INCREMENT,
-    department_name VARCHAR(50) NOT NULL
+DROP DATABASE IF EXISTS employees;
+CREATE DATABASE employees;
+USE employees;
+
+CREATE TABLE department (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    department_name VARCHAR(30) NOT NULL
 );
 
-CREATE TABLE Roles (
-    role_id INT PRIMARY KEY AUTO_INCREMENT,
-    title VARCHAR(50) NOT NULL,
+CREATE TABLE role (
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    title VARCHAR(30) NOT NULL,
     salary DECIMAL(10, 2) NOT NULL,
-    department_id INT,
-    FOREIGN KEY (department_id) REFERENCES Departments(department_id)
+    department_id INTEGER
 );
 
-CREATE TABLE Employees (
-    employee_id INT PRIMARY KEY AUTO_INCREMENT,
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    role_id INT,
-    manager_id INT,
-    FOREIGN KEY (role_id) REFERENCES Roles(role_id),
-    FOREIGN KEY (manager_id) REFERENCES Employees(employee_id)
+CREATE TABLE employee(
+    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    first_name VARCHAR(30) NOT NULL,
+    last_name VARCHAR(30) NOT NULL,
+    role_id INTEGER,
+    manager_id INTEGER
 );
-
-
