@@ -55,10 +55,6 @@ function loadMainPrompts() {
           name: 'Find Employees By Department',
           value: 'FIND_ALL_EMPLOYEES_BY_DEPARTMENT',
         },
-        {
-          name: 'Update Employee by Role',
-          value: 'UPDATE_EMPLOYEE_ROLE',
-        },
         
         {
           name: 'Quit',
@@ -97,9 +93,7 @@ function loadMainPrompts() {
       case 'FIND_ALL_EMPLOYEES_BY_DEPARTMENT':
         FindAllEmployeesByDepartment();
         break;
-      case 'UPDATE_EMPLOYEE_ROLE':
-        UpdateEmployeeRole();
-        break;
+
       default:
         quit();
     }
@@ -116,3 +110,74 @@ function ViewAllDepartments() {
     })
     .then(() => loadMainPrompts());
 }
+
+// View all Roles
+function ViewAllRoles() {
+  db.viewAllRoles()
+    .then(({ rows }) => {
+      let roles = rows;
+      console.log('\n');
+      console.table(roles);
+    })
+    .then(() => loadMainPrompts());
+}
+
+// View all employees
+function ViewAllEmployees() {
+  db.viewAllEmployees()
+    .then(({ rows }) => {
+      let employees = rows;
+      console.log('\n');
+      console.table(employees);
+    })
+    .then(() => loadMainPrompts());
+}
+
+// Add a department
+function AddDepartment() {
+  prompt([
+    {
+      name: 'name',
+      message: 'What is the name of the department?',
+    },
+  ]).then((res) => {
+    let name = res;
+    db.addDepartment(name)
+      .then(() => console.log(`Added ${name.name} to the database`))
+      .then(() => loadMainPrompts());
+  });
+}
+
+// Add a role
+function AddRole() {
+  db.addRole().then(({ rows }) => {
+    let departments = rows;
+    const departmentChoices = departments.map(({ id, name }) => ({
+      name: name,
+      value: id,
+    }));
+
+    prompt([
+      {
+        name: 'title',
+        message: 'What is the name of the role?',
+      },
+      {
+        name: 'salary',
+        message: 'What is the salary of the role?',
+      },
+      {
+        type: 'list',
+        name: 'department_id',
+        message: 'Which department does the role belong to?',
+        choices: departmentChoices,
+      },
+    ]).then((role) => {
+      db.createRole(role)
+        .then(() => console.log(`Added ${role.title} to the database`))
+        .then(() => loadMainPrompts());
+    });
+  });
+}
+
+

@@ -80,14 +80,7 @@ addDepartment(department) {
       [departmentId]
     );
   }
-
-  // Update the given employee's role
-  updateEmployeeRole(employeeId, roleId) {
-    return this.query('UPDATE employee SET role_id = $1 WHERE id = $2', [
-      roleId,
-      employeeId,
-    ]);
   }
 
-}
+
 module.exports = DB
