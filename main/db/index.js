@@ -35,8 +35,8 @@ viewAllEmployees() {
 
 // Add a Department
 addDepartment(department) {
-    return this.query('INSERT INTO department (name) VALUES ($1)', [
-      department.name,
+    return this.query('INSERT INTO department (department_name) VALUES ($1)', [
+      department.department_name,
     ]);
   }
 
@@ -90,3 +90,4 @@ addDepartment(department) {
   }
 
 }
+module.exports = DB

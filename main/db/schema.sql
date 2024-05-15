@@ -3,12 +3,12 @@ CREATE DATABASE employees;
 USE employees;
 
 CREATE TABLE department (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL PRIMARY KEY,
     department_name VARCHAR(30) NOT NULL
 );
 
 CREATE TABLE role (
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL PRIMARY KEY,
     title VARCHAR(30) NOT NULL,
     salary DECIMAL(10, 2) NOT NULL,
     department_id INTEGER
@@ -16,11 +16,11 @@ CREATE TABLE role (
 );
 
 CREATE TABLE employee(
-    id INTEGER PRIMARY KEY AUTO_INCREMENT,
+    id SERIAL PRIMARY KEY,
     first_name VARCHAR(30) NOT NULL,
     last_name VARCHAR(30) NOT NULL,
     role_id INTEGER,
     CONSTRAINT fork_role FOREIGN KEY (role_id) REFERENCES role(id) ON DELETE CASCADE,
   manager_id INTEGER,
-  CONSTRAINT forkk_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
+  CONSTRAINT fork_manager FOREIGN KEY (manager_id) REFERENCES employee(id) ON DELETE SET NULL
 );
