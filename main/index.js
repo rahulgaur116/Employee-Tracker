@@ -1,97 +1,120 @@
-const pool = require('./db/connection');
+const { prompt } = require('inquirer');
+const logo = require('asciiart-logo');
+const db = require('./db');
 
-class DB {
-  constructor() {}
+init();
 
-  async query(sql, args = []) {
-    const client = await pool.connect();
-    try {
-      const result = await client.query(sql, args);
-      return result;
-    } finally {
-      client.release();
+// Display logo text, load main prompts
+function init() {
+  const logoText = logo({ name: 'Employee Manager' }).render();
+
+  console.log(logoText);
+
+  loadMainPrompts();
+}
+
+function loadMainPrompts() {
+  prompt([
+    {
+      type: 'list',
+      name: 'choice',
+      message: 'What would you like to do?',
+      choices: [
+        {
+          name: 'View All Departments',
+          value: 'VIEW_DEPARTMENTS',
+        },
+        {
+          name: 'View All Employees By Roles',
+          value: 'VIEW_ALL_ROLES',
+        },
+        {
+          name: 'View All Employees',
+          value: 'VIEW_ALL_EMPLOYEES',
+        },
+        {
+          name: 'Add Department',
+          value: 'ADD_DEPARTMENT',
+        },
+        {
+          name: 'Add Role',
+          value: 'ADD_ROLE',
+        },
+        {
+          name: 'Add Employee',
+          value: 'ADD_EMPLOYEE',
+        },
+        {
+          name: 'Update Employee Role',
+          value: 'UPDATE_EMPLOYEE_ROLE',
+        },
+        {
+          name: 'Update Employee Manager',
+          value: 'UPDATE_EMPLOYEE_MANAGER',
+        },
+       
+        {
+          name: 'Find Employees By Department',
+          value: 'FIND_ALL_EMPLOYEES_BY_DEPARTMENT',
+        },
+        {
+          name: 'Update Employee by Role',
+          value: 'UPDATE_EMPLOYEE_ROLE',
+        },
+        
+        {
+          name: 'Quit',
+          value: 'QUIT',
+        },
+      ],
+    },
+  ]).then((res) => {
+    let choice = res.choice;
+    // Call the appropriate function depending on what the user chose
+    switch (choice) {
+      case 'VIEW_DEPARTMENTS':
+        ViewAllDepartments();
+        break;
+      case 'VIEW_ALL_ROLES':
+        ViewAllRoles();
+        break;
+      case 'VIEW_ALL_EMPLOYEES':
+        ViewAllEmployees();
+        break;
+      case 'ADD_DEPARTMENT':
+        AddDepartment();
+        break;
+      case 'ADD_ROLE':
+        AddRole();
+        break;
+      case 'ADD_EMPLOYEE':
+        AddEmployee();
+        break;
+      case 'UPDATE_EMPLOYEE_ROLE':
+        UpdateEmployeeRole();
+        break;
+      case 'UPDATE_EMPLOYEE_MANAGER':
+        UpdateEmployeeManager();
+        break;
+      case 'FIND_ALL_EMPLOYEES_BY_DEPARTMENT':
+        FindAllEmployeesByDepartment();
+        break;
+      case 'UPDATE_EMPLOYEE_ROLE':
+        UpdateEmployeeRole();
+        break;
+      default:
+        quit();
     }
-  }
+  });
+}
 
-  // View all departments 
-  viewAllDepartments() {
-    return this.query('SELECT department.id, department.name FROM department;');
-  }
-
-// View all roles 
-viewAllRoles() {
-    return this.query(
-      'SELECT role.id, role.title, department.name AS department, role.salary FROM role LEFT JOIN department on role.department_id = department.id;'
-    );
-  }
-
-// View all employees 
-
-viewAllEmployees() {
-    return this.query(
-      "SELECT employee.id, employee.first_name, employee.last_name, role.title, department.name AS department, role.salary, CONCAT(manager.first_name, ' ', manager.last_name) AS manager FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department on role.department_id = department.id LEFT JOIN employee manager on manager.id = employee.manager_id;"
-    );
-  }
-
-// Add a Department
-addDepartment(department) {
-    return this.query('INSERT INTO department (name) VALUES ($1)', [
-      department.name,
-    ]);
-  }
-
-  //Add a Role
-  addRole(role) {
-    const { title, salary, department_id } = role;
-    return this.query(
-      'INSERT INTO role (title, salary, department_id) VALUES ($1, $2, $3)',
-      [title, salary, department_id]
-    );
-  }
-
-  //Add an Employee 
-  addEmployee(employee) {
-    const { first_name, last_name, role_id, manager_id } = employee;
-    return this.query(
-      'INSERT INTO employee (first_name, last_name, role_id, manager_id) VALUES ($1, $2, $3, $4)',
-      [first_name, last_name, role_id, manager_id]
-    );
-  }
-
-  // Update an Employee Role & manager
-  updateEmployeeRole(employeeId, roleId) {
-    return this.query('UPDATE employee SET role_id = $1 WHERE id = $2', [
-      roleId,
-      employeeId,
-    ]);
-  }
-
-  updateEmployeeManager(employeeId, managerId) {
-    return this.query('UPDATE employee SET manager_id = $1 WHERE id = $2', [
-      managerId,
-      employeeId,
-    ]);
-  }
-
-  // Find all departments
-  findAllDepartments() {
-    return this.query('SELECT department.id, department.name FROM department;');
-  }
-
-   // Find all employees 
-   findAllEmployeesByDepartment(departmentId) {
-    return this.query(
-      'SELECT employee.id, employee.first_name, employee.last_name, role.title FROM employee LEFT JOIN role on employee.role_id = role.id LEFT JOIN department department on role.department_id = department.id WHERE department.id = $1;',
-      [departmentId]
-    );
-  }
-
-  // Update the given employee's role
-  updateEmployeeRole(employeeId, roleId) {
-    return this.query('UPDATE employee SET role_id = $1 WHERE id = $2', [
-      roleId,
-      employeeId,
-    ]);
-  }
-
+// View all deparments
+function ViewAllDepartments() {
+  db.viewAllDepartments()
+    .then(({ rows }) => {
+      let departments = rows;
+      console.log('\n');
+      console.table(departments);
+    })
+    .then(() => loadMainPrompts());
 }

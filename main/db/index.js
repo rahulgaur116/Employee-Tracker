@@ -4,18 +4,18 @@ class DB {
   constructor() {}
 
   async query(sql, args = []) {
-    const client = await pool.connect();
+    const client = await pool.connect(); // Connect to the database pool
     try {
-      const result = await client.query(sql, args);
-      return result;
+      const result = await client.query(sql, args);// Execute the SQL query
+      return result; // Return the query result
     } finally {
-      client.release();
+      client.release(); // Release the database connection
     }
   }
 
-  // View all departments 
+  // View all departments function
   viewAllDepartments() {
-    return this.query('SELECT department.id, department.name FROM department;');
+    return this.query('SELECT id, department.name FROM department;');
   }
 
 // View all roles 
@@ -71,11 +71,6 @@ addDepartment(department) {
       managerId,
       employeeId,
     ]);
-  }
-
-  // Find all departments
-  findAllDepartments() {
-    return this.query('SELECT department.id, department.name FROM department;');
   }
 
    // Find all employees 
