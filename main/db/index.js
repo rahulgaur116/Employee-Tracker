@@ -80,6 +80,14 @@ addDepartment(department) {
       [departmentId]
     );
   }
+
+  // Find all employees except the given employee id
+  findAllPossibleManagers(employeeId) {
+    return this.query(
+      'SELECT id, first_name, last_name FROM employee WHERE id != $1',
+      [employeeId]
+    );
+  }
   }
 
 

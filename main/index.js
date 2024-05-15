@@ -288,7 +288,49 @@ function UpdateEmployeeRole() {
   });
 }
 
+// Update an employee's manager
+function UpdateEmployeeManager() {
+  db.viewAllEmployees().then(({ rows }) => {
+    let employees = rows;
+    const employeeChoices = employees.map(({ id, first_name, last_name }) => ({
+      name: `${first_name} ${last_name}`,
+      value: id,
+    }));
 
+    prompt([
+      {
+        type: 'list',
+        name: 'employeeId',
+        message: "Which employee's manager do you want to update?",
+        choices: employeeChoices,
+      },
+    ]).then((res) => {
+      let employeeId = res.employeeId;
+      db.findAllPossibleManagers(employeeId).then(({ rows }) => {
+        let managers = rows;
+        const managerChoices = managers.map(
+          ({ id, first_name, last_name }) => ({
+            name: `${first_name} ${last_name}`,
+            value: id,
+          })
+        );
+
+        prompt([
+          {
+            type: 'list',
+            name: 'managerId',
+            message:
+              'Which employee do you want to set as manager for the selected employee?',
+            choices: managerChoices,
+          },
+        ])
+          .then((res) => db.updateEmployeeManager(employeeId, res.managerId))
+          .then(() => console.log("Updated employee's manager"))
+          .then(() => loadMainPrompts());
+      });
+    });
+  });
+}
 // Exit the application
 function quit() {
   console.log('Goodbye!');
