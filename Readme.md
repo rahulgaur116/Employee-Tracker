@@ -59,7 +59,9 @@ View a list of all employees currently in the database.
 
 For demo of the app please refer to the cideo under assets folder and link below
 
-<video controls src="Assets/Functionality demo video.mp4" title="Title"></video>
+
+https://github.com/rahulgaur116/Employee-Tracker/assets/156384325/aa249d72-5436-4fa0-b555-6a3573089286
+
 ![alt text](<Assets/Start page.jpg>) 
 ![alt text](<Assets/View all employees.jpg>)
 
